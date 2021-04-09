@@ -1,5 +1,5 @@
 # 项目说明
-本项目提供了实现webpack整合webassembly开发的一种方式
+本项目介绍了vscode下如何使用webpack整合cmake和emscripten开发webassembly项目
 
 # 项目启动
 - 执行命令`npm install`
@@ -27,7 +27,7 @@
 # 具体实现
 创建wasm目录用于编写c++项目
 ## emsdk头文件引入
-设置-扩展-c++ 选项 C_Cpp.default.includePath 编辑setting.json 添加"D:\\emsdk\\upstream\\emscripten\\system\\**"，实际替换为自己的路径
+打开vscode设置-扩展-c++ 选项 C_Cpp.default.includePath 编辑setting.json 添加"D:\\emsdk\\upstream\\emscripten\\system\\**"，实际替换为自己的路径
 ## 编写c++代码及CMakeLists.txt
 详见`wasm/main.cpp`、`wasm/CMakeLists.txt`
 - main.cpp 只是简单创建一个c++类输出信息
@@ -51,7 +51,7 @@ module: {
     ]
 },
 ```
-## 使用csside模块
+## 使用cside模块
 详见`src/main.js`
 ```
 import _load_school from '../wasm/school.cside'
@@ -67,6 +67,7 @@ _module_school就是wasm模块对应的js模块，便于调用c++中的方法
 如果只想编译c++代码，详见`wasm/build.js`
 
 # 后期计划
-目前cside-loader处理.cside文件时，每次都会重新编译c++代码，后期可做缓存优化
+1、目前cside-loader处理.cside文件时，每次都会重新编译c++代码，后期可做缓存优化
+2、支持linux环境下构建
 
 
