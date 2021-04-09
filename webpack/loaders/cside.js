@@ -29,6 +29,7 @@ function get_name_from_filepath(filepath) {
 // 目前它里面的内容没有实际意义
 // 后期可考虑存放c++项目相关配置信息 以供cside-loader扩展能力
 module.exports = function (source) {
+    this.cacheable()
     const callback = this.async()
     // cside文件所在目录
     const sourceDir = path.resolve(this.resourcePath, "..")
