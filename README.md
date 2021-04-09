@@ -1,7 +1,7 @@
-# 项目说明
+# webpack整合c++项目
 本项目介绍了vscode下如何使用webpack整合cmake和emscripten开发webassembly项目
 
-# 项目启动
+# 启动项目
 - 执行命令`npm install`
 - 本地开发 执行命令`npm run dev` 浏览器输入地址查看控制台
 - 发布模式 执行命令`npm run build` 和 `npm run koa` 浏览器输入地址查看控制台
