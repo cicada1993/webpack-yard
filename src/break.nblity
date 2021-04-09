@@ -1,0 +1,1 @@
+<div nb:{console.log('this is called')} nb:{console.log('this is called again')} >hello,nblity!</div>
