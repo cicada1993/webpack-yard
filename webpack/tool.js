@@ -61,13 +61,15 @@ function cmakeBuild({ dir, favor, emsdk = {} } = {}, resolve = () => { }) {
     let env_shell
     if (process.platform == "win32") {
         emsdk_env = path.join(emsdk_dir, "emsdk_env.bat")
-        env_shell = pathForCmd(emsdk_env)
+        // windows下 需要手动执行脚本获取临时环境
+        env_shell = `pathForCmd(emsdk_env) &&`
     } else {
         emsdk_env = path.join(emsdk_dir, "emsdk_env.sh")
-        env_shell = `source ${emsdk_env}`
+        // linux下 按emscripten官网 执行emsdk_env.sh即可获得全局环境
+        env_shell = ''
     }
     if (favor == 'wasm') {
-        buildCommand = `${env_shell} && cd build && emcmake cmake .. && cmake --build .`
+        buildCommand = `${env_shell} cd build && emcmake cmake .. && cmake --build .`
     } else {
         buildCommand = `cd build && cmake -G "MinGW Makefiles" .. && cmake --build .`
     }

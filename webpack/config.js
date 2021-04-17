@@ -24,7 +24,7 @@ module.exports = merge(
                         options: {
                             emsdk: {
                                 win32: "D:\\emsdk",
-                                linux: ""
+                                linux: "/home/kotlinrust/Apps/emsdk"
                             }
                         }
                     }
