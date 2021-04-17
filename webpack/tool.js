@@ -62,7 +62,7 @@ function cmakeBuild({ dir, favor, emsdk = {} } = {}, resolve = () => { }) {
     if (process.platform == "win32") {
         emsdk_env = path.join(emsdk_dir, "emsdk_env.bat")
         // windows下 需要手动执行脚本获取临时环境
-        env_shell = `pathForCmd(emsdk_env) &&`
+        env_shell = `${pathForCmd(emsdk_env)} &&`
     } else {
         emsdk_env = path.join(emsdk_dir, "emsdk_env.sh")
         // linux下 按emscripten官网 执行emsdk_env.sh即可获得全局环境
