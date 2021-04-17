@@ -1,6 +1,7 @@
-const cmd = require("node-cmd")
 const path = require('path')
 const fs = require('fs')
+const { getOptions } = require('loader-utils')
+const { cmakeBuild } = require('../tool')
 function get_name_from_filepath(filepath) {
     if (!filepath)
         return null;
@@ -30,34 +31,43 @@ function get_name_from_filepath(filepath) {
 // 后期可考虑存放c++项目相关配置信息 以供cside-loader扩展能力
 module.exports = function (source) {
     this.cacheable()
+    // 默认配置
+    const defaultOptions = {}
+    const options = Object.assign(
+        {
+
+        },
+        defaultOptions,
+        getOptions(this)
+    )
+    console.log('cside loader options', options)
+
     const callback = this.async()
     // cside文件所在目录
     const sourceDir = path.resolve(this.resourcePath, "..")
     // 文件名
     const fileName = get_name_from_filepath(this.resourcePath)
-    // 执行cmd命令构建c++项目步骤 
-    // 进入cmake项目根目录 
-    // 执行emsdk临时环境脚本 
-    // 创建build目录 
-    // 执行emcmake命令生成makefile 
-    // 执行cmake构建命令
-    const emsdk_env_bat = "D:\\emsdk\\emsdk_env.bat"
-    cmd.run(
-        `cd ${sourceDir} && ${emsdk_env_bat} && cd build && emcmake cmake .. && cmake --build .`,
-        (err, data, stderr) => {
-            const fromPath = path.resolve(sourceDir, `./build/${fileName}.wasm`)
-            // const outputPath = this._compiler.options.output.path
-            // const toPath = path.resolve(outputPath, `${fileName}.wasm`)
-            console.log('wasm file', fromPath)
-            // emit wasm file to webpack output dir
-            fs.readFile(fromPath, (err, data) => {
-                this.emitFile(`${fileName}.wasm`, data)
-            })
-            // replace import module 由原来的.cside模块变成c++编译得到的js模块
-            let code = `import * as ${fileName} from './build/${fileName}.js'
-             export default ${fileName}
-            `
-            callback(null, code)
-        }
-    )
+    const fromPath = path.resolve(sourceDir, `./build/${fileName}.wasm`)
+
+    const handleRet = () => {
+        // emit wasm file to webpack output dir
+        fs.readFile(fromPath, (err, data) => {
+            this.emitFile(`${fileName}.wasm`, data)
+        })
+        // replace import module 由原来的.cside模块变成c++编译得到的js模块
+        let genCode =
+            `import * as ${fileName} from './build/${fileName}.js'
+            export default ${fileName}`
+        console.log('genCode', genCode)
+        callback(null, genCode)
+    }
+    // 先编译再返回
+    console.log('cside-loader', 'compiling wasm module')
+    cmakeBuild({
+        dir: sourceDir,
+        favor: "wasm",
+        emsdk: options.emsdk
+    }, (res) => {
+        handleRet()
+    })
 }

@@ -12,6 +12,7 @@ public:
     ~Guard();
     void setWords(string sentence);
     string getWords();
+    void test();
 };
 
 #endif
