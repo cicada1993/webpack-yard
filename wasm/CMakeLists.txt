@@ -1,15 +1,15 @@
 cmake_minimum_required(VERSION 3.8)
 
 project(school VERSION 1.0)
-message(STATUS "operation system is ${CMAKE_SYSTEM}")
+message(STATUS "CMake is running on ${CMAKE_HOST_SYSTEM_NAME}")
 # 设置变量root_dir 值为CMakeLists.txt文件所在目录路径
 set(root_dir ${CMAKE_CURRENT_SOURCE_DIR})
-if(WIN32)
+# 设置eigen安装路径 便于导入头文件 windows/linux下路径不同
+if(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
     set(eigen_path "D:\\eigen-3.3.9")
 else()
     set(eigen_path "/home/kotlinrust/Apps/eigen-3.3.9")
 endif()
-
 aux_source_directory("${root_dir}/libtest/emsdk" test_emsdk_cfile)
 aux_source_directory("${root_dir}/libtest/eigen" test_eigen_cfile)
 include_directories(
