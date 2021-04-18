@@ -1,5 +1,5 @@
 const path = require('path')
-const fs = require('fs-extra')
+const fs = require('fs')
 console.log('current platform', process.platform)
 if (process.platform == "win32") {
     let emsdk_path = "‪D://emsdk"

@@ -1,8 +1,29 @@
+const os = require('os')
 const fs = require('fs')
 const path = require('path')
 const { spawn } = require("child_process");
-const iconv = require('iconv-lite');
 const { _brand, _success, _danger, _warning, _info } = require('./constants')
+
+// 获取本机ip
+function getHostIP() {
+    const network = os.networkInterfaces()
+    const keys = Object.keys(network)
+    for (let key of keys) {
+        if (key.indexOf('VMware') > -1 || key.indexOf('WSL') > -1) {
+            // 跳过虚拟机和子系统
+            continue
+        }
+        const netList = network[key]
+        for (let netIndex in netList) {
+            const net = netList[netIndex]
+            if (net.family === 'IPv4' && net.address !== '127.0.0.1' && !net.internal) {
+                return net.address
+            }
+        }
+    }
+    return '0.0.0.0'
+}
+
 // 递归清空文件夹
 function cleanDir(dir, isRoot = true) {
     let files = [];
@@ -30,8 +51,13 @@ function pathForCmd(filePath) {
 }
 
 /**
- * dir c++源码目录
- * favor 输出
+ * node环境 执行shell命令 构建cmake项目 支持emscripten项目
+ * @param {*} config 构建配置项 
+ *  dir cmake项目根目录 
+ *  favor项目输出格式 wasm 表示webassembly项目输出 为空 普通c++项目输出
+ *  emsdk emscripten环境配置
+ * @param {*} resolve 
+ * @returns 
  */
 function cmakeBuild({ dir, favor, emsdk = {} } = {}, resolve = () => { }) {
     // 先校验配置参数
@@ -79,7 +105,7 @@ function cmakeBuild({ dir, favor, emsdk = {} } = {}, resolve = () => { }) {
         console.log(_info(data));
     });
     buildProcess.stderr.on('data', (data) => {
-        console.log(_warning('build failed'), _info(iconv.decode(data, "utf-8")));
+        console.log(_warning(data))
     });
     buildProcess.on("error", (error) => {
         console.log(_danger('build error'), error)
@@ -91,5 +117,6 @@ function cmakeBuild({ dir, favor, emsdk = {} } = {}, resolve = () => { }) {
 }
 //chcp 65001
 module.exports = {
-    cmakeBuild
+    cmakeBuild,
+    getHostIP
 }

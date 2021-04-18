@@ -26,7 +26,6 @@ function get_name_from_filename(filename) {
 module.exports = function (source) {
     const options = getOptions(this)
     console.log('nblity loader options', options)
-    console.log('node_env', process.env.NODE_ENV)
     let nbReg = new RegExp(/nb:\{.+?\}/g)
     let nbCodeArr = source.match(nbReg)
     let codeArr = nbCodeArr.map(

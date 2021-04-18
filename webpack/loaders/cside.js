@@ -54,7 +54,7 @@ module.exports = function (source) {
         fs.readFile(fromPath, (err, data) => {
             this.emitFile(`${fileName}.wasm`, data)
         })
-        // replace import module 由原来的.cside模块变成c++编译得到的js模块
+        // return created code
         let genCode =
             `import * as ${fileName} from './build/${fileName}.js'
             export default ${fileName}`
@@ -62,7 +62,7 @@ module.exports = function (source) {
         callback(null, genCode)
     }
     // 先编译再返回
-    console.log('cside-loader', 'compiling wasm module')
+    console.log('cside-loader', 'compiling cmake project')
     cmakeBuild({
         dir: sourceDir,
         favor: "wasm",
